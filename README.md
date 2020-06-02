@@ -60,6 +60,18 @@ The CLI is implemented in bash and the only requirements are bash and OpenSSL. T
 ./fips-cli.sh "s3-fips.us-gov-west-1.amazonaws.com:443" "/"
 ```
 
+### Using Docker
+
+If you are running Docker on your machine and want to use a FIPS compliant version of OpenSSL to test, you can build one using
+
+```bash
+docker image build -t fips-cli:latest .
+```
+
+```bash
+docker container run -it fips-cli:latest "s3-fips.us-gov-west-1.amazonaws.com:443" "/"
+```
+
 ## What is FIPS 140-2?
 
 The Federal Information Processing Standard Publication 140-2, (FIPS PUB 140-2),[1][2] is a U.S. government computer security standard used to approve cryptographic modules. The title is Security Requirements for Cryptographic Modules. Initial publication was on May 25, 2001 and was last updated December 3, 2002.

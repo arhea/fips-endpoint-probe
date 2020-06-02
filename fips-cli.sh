@@ -1,21 +1,11 @@
 #!/bin/bash -e
 
-usage() {
-  cat << EOF
-usage: $0 <url> <path>
-
-URL: <hostname>:<port>
-Path: /
-
-EOF
-}
-
 # Parameters
 TEST_ENDPOINT="$1"
 TEST_PATH="$2"
 
 # List all of the ciphers available in OpenSSL
-CIPHERS_ALL=$(openssl ciphers 'ALL' | tr ':' '\n')
+CIPHERS_ALL=$(openssl ciphers | tr ':' '\n')
 
 # FIPS Ciphers
 CIPHERS_FIPS=$(openssl ciphers 'TLSv1.2+FIPS:kRSA+FIPS:!SSLv3:!eNULL:!aNULL' | tr ':' '\n')
