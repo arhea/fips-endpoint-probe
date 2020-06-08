@@ -164,9 +164,9 @@ command_run() {
   TOTAL_APPROVED_COUNT=$((${#RESULT_PASSED[@]} + ${#RESULT_WARN[@]}))
 
   print_list_title "Summary Findings:"
-  echo -e "- $ENDPOINT implements $TOTAL_APPROVED_COUNT of ${#CIPHERS_FIPS[@]} NIST FIPS 140-2 ciphers."
-  echo -e "- $ENDPOINT implements ${#RESULT_WARN[@]} of ${#CIPHERS_FIPS_DEPRECATED[@]} deprecated by NIST, please update before the transition window closes."
-  echo -e "- $ENDPOINT implements ${#RESULT_FAILED[@]} unapproved ciphers."
+  echo -e "- $ENDPOINT implements $TOTAL_APPROVED_COUNT of ${#CIPHERS_FIPS[@]} NIST FIPS 140-2 approved ciphers."
+  echo -e "- $ENDPOINT implements ${#RESULT_WARN[@]} of the ${#CIPHERS_FIPS_DEPRECATED[@]} deprecated ciphers by NIST, please update before the transition period ends."
+  echo -e "- $ENDPOINT implements ${#RESULT_FAILED[@]} unapproved ciphers from NIST."
   echo -e "\n\n"
 
   if [ ${#RESULT_FAILED[@]} -eq 0 ] && [ ${#RESULT_WARN[@]} -eq 0 ]; then
