@@ -1,4 +1,4 @@
-#!/usr/local/bin/bash -e
+#!/usr/bin/env bash -e
 
 get_nist_ciphers() {
   mapfile -t CIPHERS_FIPS < ./data/fips_approved.txt
