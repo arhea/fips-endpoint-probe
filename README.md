@@ -21,9 +21,16 @@ To view the list of deprecated ciphers, run the following command:
 
 ## Usage
 
-The CLI is implemented in bash and the only requirements are bash and OpenSSL. The script does not require the FIPS version of OpenSSL as this is a simple cipher check.
+*Note: This script requires Bash>=4.0. We recommend installing a newer version of Bash via Homebrew or your local package manager.*
 
 ```bash
+# clone the repository
+git clone --recurse-submodules https://github.com/arhea/fips-endpoint-probe/
+
+# change into the repository folder
+cd fips-endpoint-probe
+
+# run a command
 ./testfips.sh help
 ```
 
