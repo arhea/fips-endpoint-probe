@@ -14,19 +14,6 @@ get_server_ciphers() {
   ./testssl.sh/testssl.sh -E -q $ENDPOINT | grep -o 'TLS_\w*' | tr -d '\t' | sort -u
 }
 
-in_array() {
-  SRC_ARRAY=$1
-  SRC_VALUE=$2
-
-  for value in ${SRC_ARRAY[@]}; do
-    if [ "$SRC_VALUE" = "$value" ]; then
-      return 0
-    fi
-  done
-
-  return 1
-}
-
 is_fips_cipher() {
   for fips_cipher in ${CIPHERS_FIPS[@]}; do
     if [ "$1" = "$fips_cipher" ]; then
@@ -89,7 +76,7 @@ print_list() {
 
 command_help() {
   echo "Usage:"
-  echo "    run <endpoint> - run a test against the provided endpoint"
+  echo "    run <endpoint> <report file> - run a test against the provided endpoint"
   echo "    list-approved - prints the list of NIST FIPS 140-2 approved ciphers in IANA format"
   echo "    list-deprecated - prints the list of NIST FIPS 140-2 deprecated ciphers in IANA format"
   echo "    help - print the usage information"
@@ -112,10 +99,16 @@ command_list_deprecated() {
 command_run() {
   # Parameters
   ENDPOINT=$1
+  REPORT_FILE=""
+
+  if [ ! -z "$2" ]; then
+    REPORT_FILE="$(pwd)/$2"
+  fi
 
   # print message that the script is running
   print_title "Start $(date) -->> $ENDPOINT <<--"
-  echo -e "\n\n\e[2mNote: Implementing the proper cipher suites does not mean your endpoint is FIPS 140-2 complaint or validated. You must also using NIST validated cryptography modules and running NIST validated operating systems.\e[22m\n\n"
+
+  echo -e "\e[2mNote: Implementing the proper cipher suites does not mean your endpoint is FIPS 140-2 complaint or validated. You must also using NIST validated cryptography modules and running NIST validated operating systems.\e[22m\n\n"
 
   # Server Cipher List
   SERVER_CIPHERS=$(get_server_ciphers)
@@ -169,7 +162,7 @@ command_run() {
   echo -e "- $ENDPOINT implements $TOTAL_APPROVED_COUNT of ${#CIPHERS_FIPS[@]} NIST FIPS 140-2 approved ciphers."
   echo -e "- $ENDPOINT implements ${#RESULT_WARN[@]} of the ${#CIPHERS_FIPS_DEPRECATED[@]} deprecated ciphers by NIST, please update before the transition period ends."
   echo -e "- $ENDPOINT implements ${#RESULT_FAILED[@]} unapproved ciphers from NIST."
-  echo -e "\n\n"
+  echo -e "\n"
 
   if [ ${#RESULT_FAILED[@]} -eq 0 ] && [ ${#RESULT_WARN[@]} -eq 0 ]; then
     print_pass "$ENDPOINT implements only NIST approved ciphers."
@@ -180,7 +173,16 @@ command_run() {
   fi
 
   echo -e ""
-  echo -e ""
+
+  if [ ! -z "$REPORT_FILE" ]; then
+
+    if [ ! -f "$REPORT_FILE" ]; then
+      echo -e "API Endpoint, Approved Ciphers, Deprecated Ciphers, Unapproved Ciphers" > $REPORT_FILE
+    fi
+
+    echo -e "\e[2mAppending CSV report to $REPORT_FILE...\e[22m \n"
+    echo -e "$ENDPOINT,${RESULT_PASSED[@]},${RESULT_WARN[@]},${RESULT_FAILED[@]}" >> $REPORT_FILE
+  fi
 
   print_title "Done $(date) -->> $ENDPOINT <<--"
 }
@@ -188,7 +190,8 @@ command_run() {
 # main run command
 case "$1" in
     run)
-      command_run $2
+      shift
+      command_run "$@"
       exit 0
       ;;
 
